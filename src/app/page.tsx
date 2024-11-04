@@ -14,7 +14,7 @@ export default function Home() {
           width="500px"
           height="500px"
           className="rounded-md border border-red-400"
-          allow="publickey-credentials-create"
+          allow="publickey-credentials-create publickey-credentials-get"
         />
       </div>
     </div>
