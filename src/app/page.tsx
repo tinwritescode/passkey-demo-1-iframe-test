@@ -7,25 +7,44 @@ export default function Home() {
   // initialize a channel to the ifram  const channel = new BroadcastChannel("iframe-channel");
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
+  const popupWindowRef = useRef<Window | null>(null);
+
+  // Add useEffect to listen for messages from popup
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Verify origin if needed
+      console.log("Received message from popup:", event.data);
+
+      // Handle different message types
+      switch (event.data.type) {
+        case "POPUP_READY":
+          console.log("Popup is ready to receive messages");
+          break;
+        // Add other cases as needed
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
   return (
     <div className="mx-auto max-w-xl">
+      <div className="h-20"></div>
       <div className="text-2xl font-bold">Iframe test</div>
 
       {/* iframe 3000 */}
-      <div className="flex h-screen items-center justify-center">
+      <div className="mt-3 flex items-center justify-center">
         <iframe
           ref={iframeRef}
           src={`${env.NEXT_PUBLIC_IFRAME_DOMAIN}`}
           width="500px"
           height="500px"
           className="rounded-md border border-red-400"
-          allow="publickey-credentials-create publickey-credentials-get *"
+          allow="publickey-credentials-create *; publickey-credentials-get *"
         />
       </div>
-
-      <div className="text-2xl font-bold">Popup test</div>
-
-      <div className="flex gap-2">
+      <div className="mt-4 flex justify-center gap-2">
         <button
           onClick={() => {
             // channelRef.current?.postMessage("hello from parent");
@@ -38,16 +57,45 @@ export default function Home() {
         >
           Send message to iframe
         </button>
+      </div>
 
+      <div className="mt-10 text-2xl font-bold">Popup test</div>
+
+      <div className="mt-4 flex gap-2">
         <button
           onClick={() => {
-            window.open(`${env.NEXT_PUBLIC_IFRAME_DOMAIN}`, "_blank");
+            const popup = window.open(
+              `${env.NEXT_PUBLIC_IFRAME_DOMAIN}`,
+              "_blank",
+              "width=500,height=500",
+            );
+            if (popup) {
+              popupWindowRef.current = popup;
+            }
           }}
           className="rounded-md bg-blue-500 p-2 text-white"
         >
-          Open iframe in new tab
+          Open popup
+        </button>
+
+        <button
+          onClick={() => {
+            if (!popupWindowRef.current) {
+              console.error("Popup window is not open");
+              return;
+            }
+            popupWindowRef.current.postMessage(
+              { type: "TRIGGER_AUTHN", value: "test" },
+              "*",
+            );
+          }}
+          className="rounded-md bg-purple-500 p-2 text-white"
+        >
+          Send message to popup
         </button>
       </div>
+
+      <div className="h-20"></div>
     </div>
   );
 }
