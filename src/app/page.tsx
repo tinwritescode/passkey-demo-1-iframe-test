@@ -30,6 +30,11 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-xl">
+      <p className="mt-10 text-sm text-gray-500">
+        The iframe and the popup listener are placed in the login screen. Make
+        sure to logout from the iframe/popup before clicking the buttons below.
+      </p>
+
       <div className="h-20"></div>
       <div className="text-2xl font-bold">Iframe test</div>
 
