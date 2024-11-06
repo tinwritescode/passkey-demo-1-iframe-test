@@ -35,6 +35,12 @@ export default function Home() {
         sure to logout from the iframe/popup before clicking the buttons below.
       </p>
 
+      {/* For login, test at login screen, for registration, test at logged in screen */}
+      <p className="mt-4">
+        For registration, test at logged in screen. <br />
+        For login, test at login screen.
+      </p>
+
       <div className="h-20"></div>
       <div className="text-2xl font-bold">Iframe test</div>
 
@@ -52,7 +58,18 @@ export default function Home() {
       <div className="mt-4 flex justify-center gap-2">
         <button
           onClick={() => {
-            // channelRef.current?.postMessage("hello from parent");
+            iframeRef.current?.contentWindow?.postMessage(
+              { type: "TRIGGER_REGISTRATION", value: "test" },
+              "*",
+            );
+          }}
+          className="rounded-md bg-green-500 p-2 text-white"
+        >
+          Trigger registration in iframe
+        </button>
+
+        <button
+          onClick={() => {
             iframeRef.current?.contentWindow?.postMessage(
               { type: "TRIGGER_AUTHN", value: "test" },
               "*",
@@ -60,7 +77,7 @@ export default function Home() {
           }}
           className="rounded-md bg-green-500 p-2 text-white"
         >
-          Send message to iframe
+          Trigger login in iframe
         </button>
       </div>
 
